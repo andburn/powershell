@@ -7,7 +7,7 @@ Param(
 
 . "$PSScriptRoot\Utils-File.ps1"
 
-$tests = Get-Location | GetChildItemsRegex -Recurse -Regex ".*bin\\($Platform\\)?$Config\\.*Test.*\.dll"
+$tests = Get-Location | GetChildItemsRegex -Recurse -Regex ".*bin\\($Platform\\)?$Config\\.*Tests?\.dll"
 
 ForEach ($t in $tests) { 
 	nunit3-console.exe --noheader --noresult /domain:single $t

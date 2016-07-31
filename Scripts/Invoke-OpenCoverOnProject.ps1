@@ -38,7 +38,7 @@ Param([string]$Summary)
 $coverage_dir = "coverage"
 $project_path = (Get-Location).Path
 $project_name = (GetChildItemsRegex -Path $project_path -Regex ".*\.sln").Replace("$project_path\", '').Replace('.sln','')
-$test_dll = GetChildItemsRegex -Path $project_path -Recurse -Regex ".*bin\\($Platform\\)?$Config\\.*Test.*\.dll"
+$test_dll = GetChildItemsRegex -Path $project_path -Recurse -Regex ".*bin\\($Platform\\)?$Config\\.*Tests?\.dll"
 
 if (($test_dll -is [system.array]) -and ($test_dll.Length -ge 2)) {
     Write-Host -ForegroundColor Red "Found more than one test assembly"

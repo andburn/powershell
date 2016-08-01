@@ -45,7 +45,11 @@ if (($test_dll -is [system.array]) -and ($test_dll.Length -ge 2)) {
     Return
 }
 
-Remove-Item "$project_path\$coverage_dir\*" -Recurse
+if (Test-Path -Path "$project_path\$coverage_dir") {
+	Remove-Item -ErrorAction SilentlyContinue "$project_path\$coverage_dir\*" -Recurse
+} else {
+	New-Item -ErrorAction SilentlyContinue -ItemType directory -Path "$project_path\$coverage_dir" | Out-Null
+}
 
 $cover_output = & OpenCover.Console.exe `
     -register:user `

@@ -34,6 +34,8 @@ if ($Date) {
 	$CommitDate += " $(GetUTCOffset)"
 }
 
+# run command
 $env:GIT_COMMITTER_DATE="`"$CommitDate`""
 git commit --date="`"$CommitDate`"" -m "`"$Message`""
-
+# clear env variable
+$env:GIT_COMMITTER_DATE=""

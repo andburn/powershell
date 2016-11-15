@@ -3,7 +3,8 @@
 Param(
 	[string]$Message,
 	[string]$Date,
-	[string]$Time	
+	[string]$Time,
+	[switch]$Amend
 )
 
 Function GetRandomTime {
@@ -36,6 +37,10 @@ if ($Date) {
 
 # run command
 $env:GIT_COMMITTER_DATE="`"$CommitDate`""
-git commit --date="`"$CommitDate`"" -m "`"$Message`""
+if ($Amend) {
+	git commit --amend --date="`"$CommitDate`"" -m "`"$Message`""
+} else {
+	git commit --date="`"$CommitDate`"" -m "`"$Message`""
+}
 # clear env variable
 $env:GIT_COMMITTER_DATE=""

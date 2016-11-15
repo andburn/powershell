@@ -1,8 +1,8 @@
 #Requires -Version 3.0
 
 Param(
-	[string]$Platform,
-	[string]$Config
+	[string]$Platform="AnyCPU",
+	[string]$Config="Release"
 )
 
 . "$PSScriptRoot\Utils-File.ps1"

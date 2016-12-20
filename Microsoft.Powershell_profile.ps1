@@ -7,3 +7,6 @@ New-Alias BuildProj $ScriptPath\Invoke-MSBuildOnProject.ps1
 New-Alias CommitDate $ScriptPath\Git-CommitWithDate.ps1
 # Misc
 New-Alias npp $env:ProgramFilesX86\Notepad++\notepad++.exe
+
+# Disable error ping
+Set-PSReadlineOption -BellStyle Visual

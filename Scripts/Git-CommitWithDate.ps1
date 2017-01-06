@@ -18,7 +18,7 @@ Function GetUTCOffset {
 	Return Get-Date -UFormat "%Z00"
 }
 
-if (-not $Message) {
+if (-not $Message -and -not $Amend) {
 	Write-Host -ForegroundColor Red "A commit message is required"
     Return
 }
@@ -38,7 +38,11 @@ if ($Date) {
 # run command
 $env:GIT_COMMITTER_DATE="`"$CommitDate`""
 if ($Amend) {
-	git commit --amend --date="`"$CommitDate`"" -m "`"$Message`""
+	if ($Mesage) {
+		git commit --amend --date="`"$CommitDate`"" -m "`"$Message`""
+	} else {
+		git commit --amend --no-edit --date="`"$CommitDate`""
+	}
 } else {
 	git commit --date="`"$CommitDate`"" -m "`"$Message`""
 }

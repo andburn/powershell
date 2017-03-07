@@ -38,7 +38,7 @@ if ($Date) {
 # run command
 $env:GIT_COMMITTER_DATE="`"$CommitDate`""
 if ($Amend) {
-	if ($Mesage) {
+	if ($Message) {
 		git commit --amend --date="`"$CommitDate`"" -m "`"$Message`""
 	} else {
 		git commit --amend --no-edit --date="`"$CommitDate`""

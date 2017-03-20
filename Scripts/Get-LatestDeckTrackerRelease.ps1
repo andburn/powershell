@@ -1,14 +1,11 @@
-Param([string]$RootDir)
+#Requires -Version 3.0
 
-Add-Type -AssemblyName System.IO.Compression.FileSystem
+Param(
+	[Parameter(Mandatory=$true)][string]$RootDir
+)
 
-$download_file = Join-Path -Path $RootDir -ChildPath 'hdt.zip'
-$rename_new = Join-Path -Path $RootDir -ChildPath 'build'
-$rename_old = Join-Path -Path $RootDir -ChildPath 'Hearthstone Deck Tracker'
+. "$PSScriptRoot\Utils-GitHub.ps1"
 
-$html = Invoke-WebRequest -Uri 'https://github.com/HearthSim/Hearthstone-Deck-Tracker/releases/latest'
-$url = ($html.ParsedHtml.getElementsByTagName('a') | Where { $_.href -like '*releases/download*' }).href.Replace('about:', 'https://github.com')
-
-(New-Object Net.WebClient).DownloadFile($url, $download_file)
-[System.IO.Compression.ZipFile]::ExtractToDirectory($download_file, $RootDir)
-Rename-Item -NewName $rename_new -Path $rename_old
+GetLatestRelease $RootDir "HearthSim" "Hearthstone-Deck-Tracker"
+$ExtractPath = Join-Path -Path $RootDir -ChildPath "Hearthstone Deck Tracker"
+Rename-Item -NewName "$ExtractPath\HearthstoneDeckTracker.exe" "$ExtractPath\Hearthstone Deck Tracker.exe"

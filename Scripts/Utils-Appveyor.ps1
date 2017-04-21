@@ -9,12 +9,20 @@ Param (
 	[string]$build_dir,
 	[string]$release_path
 )
+	if (-not $env:APPVEYOR_REPO_TAG_NAME) {
+		Write-Host -Foreground Yellow "Skipping artifact creation, tag not found."
+		Return
+	}
 
     $artifact_filename = "$($artifact_prefix)_$env:APPVEYOR_REPO_TAG_NAME.zip"
     $artifact = Join-Path -Path $build_dir -ChildPath $artifact_filename
+    $bin_path = Join-Path -Path $env:APPVEYOR_BUILD_FOLDER -ChildPath $project_name | Join-Path -ChildPath $release_path
 
-    mkdir $build_dir
-    Copy-Item -Path "$env:APPVEYOR_BUILD_FOLDER\$release_path\*dll*" -Destination $build_dir
+    If (test-path $build_dir) {
+        Remove-Item -Recurse -Force $build_dir | out-null
+    }
+    mkdir $build_dir | out-null
+    Copy-Item -Path "$bin_path\*dll" -Destination $build_dir
     & 7z a $artifact $build_dir
     Push-AppveyorArtifact $artifact -FileName $artifact_filename -DeploymentName release
 }

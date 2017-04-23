@@ -7,10 +7,11 @@ Param(
 
 . "$PSScriptRoot\Utils-File.ps1"
 
-$tests = Get-Location | GetChildItemsRegex -Recurse -Regex ".*bin\\($Platform\\)?$Config\\.*Tests?\.dll"
+$NUnit = Get-Location | GetChildItemsRegex -Recurse -Regex ".*NUnit.ConsoleRunner.*nunit3-console.exe$"
+$tests = Get-Location | GetChildItemsRegex -Recurse -Regex ".*bin\\($Platform\\)?$Config\\.*Tests?\.dll$"
 
-ForEach ($t in $tests) { 
-	nunit3-console.exe --noheader --noresult /domain:single $t
+ForEach ($t in $tests) {
+	& $NUnit --noheader --noresult /domain:single $t
 }
 
 if (($tests -is [system.array]) -and ($tests.Length -ge 2)) {

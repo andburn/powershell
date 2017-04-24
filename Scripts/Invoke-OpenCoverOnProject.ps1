@@ -1,8 +1,8 @@
-﻿#Requires -Version 3.0
+#Requires -Version 3.0
 
 Param(
-	[string]$Platform,
-	[string]$Config
+	[string]$Platform="AnyCPU",
+	[string]$Config="Release"
 )
 
 . "$PSScriptRoot\Utils-File.ps1"
@@ -15,8 +15,8 @@ Param([string]$File)
     $match = [regex]::Match($summary, '(\d+\.\d*)\%')
     if ($match.Success) {
         $percentage = [double]$match.Captures.Groups[1].Value
-        if ($percentage -ge 50) { $color = 'Yellow' }
         if ($percentage -ge 85) { $color = 'Green' }
+        elseif ($percentage -ge 50) { $color = 'Yellow' }
     }    
     Write-Host -ForegroundColor $color $summary
 }
@@ -24,47 +24,65 @@ Param([string]$File)
 Function WriteTestCount {
 Param([string]$Summary)
 
+	$regex = -join 'Test Count:\s*(?<count>\d+),\s*',
+		'Passed:\s*(?<pass>(\d+)),\s*',
+		'Failed:\s*(?<fail>\d+),\s*',
+		'Warnings:\s*(?<warn>\d+),\s*',
+		'Inconclusive:\s*(?<unknown>\d+),\s*',
+		'Skipped:\s*(?<skip>\d+)'
     $color = 'Green'
     $line = 'Test Count: Error'
-    $match = [regex]::Match($Summary, 'Test Count: (\d+), Passed: (\d+), Failed: (\d+), Inconclusive: (\d+), Skipped: (\d+)')
+    $match = [regex]::Match($Summary, $regex)
     if ($match.Success) {
-        $line = $match.Captures.Groups[0].Value
-        $failed = [int]$match.Captures.Groups[3].Value
-        if ($failed -ge 1) { $color = 'Red' }
+		$total = [int]$match.Groups["count"].Value
+        $failed = [int]$match.Groups["fail"].Value
+		$passed = [int]$match.Groups["pass"].Value
+		$warning = [int]$match.Groups["warn"].Value
+		$line = "Tests: $passed of $total passed"
+        if ($failed -ge 1) {  $color = 'Red' }
+		elseif ($warning -ge 1) { $color = 'Yellow' }
     }    
     Write-Host -ForegroundColor $color $line 
 }
 
-$coverage_dir = "coverage"
-$project_path = (Get-Location).Path
-$project_name = (GetChildItemsRegex -Path $project_path -Regex ".*\.sln").Replace("$project_path\", '').Replace('.sln','')
-$test_dll = GetChildItemsRegex -Path $project_path -Recurse -Regex ".*bin\\($Platform\\)?$Config\\.*Tests?\.dll"
+$coverageDir = "coverage"
+$projectPath = (Get-Location).Path
+$projectName = (GetChildItemsRegex -Path $projectPath -Regex ".*\.sln").Replace("$projectPath\", '').Replace('.sln','')
+$tests = GetChildItemsRegex -Path $projectPath -Recurse -Regex ".*bin\\($Platform\\)?$Config\\.*Tests?\.dll$"
+# get the exe paths from the nuget packages, not local
+$exeNUnit = Get-Location | GetChildItemsRegex -Recurse -Regex ".*NUnit.ConsoleRunner.*nunit3-console.exe$"
+$exeOpenCover = Get-Location | GetChildItemsRegex -Recurse -Regex ".*OpenCover.Console.exe$"
+$exeReportGen = Get-Location | GetChildItemsRegex -Recurse -Regex ".*ReportGenerator.exe$"
 
-if (($test_dll -is [system.array]) -and ($test_dll.Length -ge 2)) {
-    Write-Host -ForegroundColor Red "Found more than one test assembly"
+# want only one test assembly
+if (-not $tests) {
+	Write-Host -ForegroundColor Red "No test assembly found ($Platform/$Config)"
+    Return
+} elseif (($tests -is [system.array]) -and ($tests.Length -ge 2)) {
+    Write-Host -ForegroundColor Red "Found more than one test assembly ($Platform/$Config)"
     Return
 }
 
-if (Test-Path -Path "$project_path\$coverage_dir") {
-	Remove-Item -ErrorAction SilentlyContinue "$project_path\$coverage_dir\*" -Recurse
+# clean the coverage directory
+if (Test-Path -Path "$projectPath\$coverageDir") {
+	Remove-Item -ErrorAction SilentlyContinue "$projectPath\$coverageDir\*" -Recurse
 } else {
-	New-Item -ErrorAction SilentlyContinue -ItemType directory -Path "$project_path\$coverage_dir" | Out-Null
+	New-Item -ErrorAction SilentlyContinue -ItemType directory -Path "$projectPath\$coverageDir" | Out-Null
 }
 
-$cover_output = & OpenCover.Console.exe `
+$cover_output = & $exeOpenCover `
     -register:user `
-    -target:'nunit3-console.exe' `
-    -targetargs:"--noheader --noresult /domain:single $test_dll" `
-    -filter:"+[$project_name]*" -mergebyhash -skipautoprops `
-    -output:"$project_path\$coverage_dir\opencover.results.xml" `
-    2>&1
-
+    -target:$exeNUnit `
+    -targetargs:"--noheader --noresult /domain:single $tests" `
+    -filter:"+[$projectName]*" -mergebyhash -skipautoprops `
+    -output:"$projectPath\$coverageDir\opencover.results.xml"
+    
 WriteTestCount $cover_output
 
-& ReportGenerator.exe `
+& $exeReportGen `
     -verbosity:Error `
-    -reports:"$project_path\$coverage_dir\opencover.results.xml" `
-    -targetdir:"$project_path\$coverage_dir" `
+    -reports:"$projectPath\$coverageDir\opencover.results.xml" `
+    -targetdir:"$projectPath\$coverageDir" `
     -reporttypes:"TextSummary;Html"
 
-WriteLineCoverage "$project_path\$coverage_dir\Summary.txt"
+WriteLineCoverage "$projectPath\$coverageDir\Summary.txt"

@@ -45,10 +45,16 @@ Param([string]$Summary)
     Write-Host -ForegroundColor $color $line 
 }
 
+If ($Platform -eq "AnyCPU") {
+	$TestRegEx = ".*bin\\$Config\\.*Tests?\.dll$"
+} Else {
+	$TestRegEx = ".*bin\\$Platform\\$Config\\.*Tests?\.dll$"
+}
+
 $coverageDir = "coverage"
 $projectPath = (Get-Location).Path
 $projectName = (GetChildItemsRegex -Path $projectPath -Regex ".*\.sln").Replace("$projectPath\", '').Replace('.sln','')
-$tests = GetChildItemsRegex -Path $projectPath -Recurse -Regex ".*bin\\($Platform\\)?$Config\\.*Tests?\.dll$"
+$tests = GetChildItemsRegex -Path $projectPath -Recurse -Regex $TestRegEx
 # get the exe paths from the nuget packages, not local
 $exeNUnit = Get-Location | GetChildItemsRegex -Recurse -Regex ".*NUnit.ConsoleRunner.*nunit3-console.exe$"
 $exeOpenCover = Get-Location | GetChildItemsRegex -Recurse -Regex ".*OpenCover.Console.exe$"
@@ -60,6 +66,9 @@ if (-not $tests) {
     Return
 } elseif (($tests -is [system.array]) -and ($tests.Length -ge 2)) {
     Write-Host -ForegroundColor Red "Found more than one test assembly ($Platform/$Config)"
+	ForEach ($t in $tests) {
+		Write-Host $t
+	}
     Return
 }
 

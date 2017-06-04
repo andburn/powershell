@@ -10,3 +10,4 @@ New-Alias npp $env:ProgramFilesX86\Notepad++\notepad++.exe
 New-Alias HDTPlugin $ScriptPath\Copy-DeckTrackerPlugin.ps1
 # Disable error ping
 Set-PSReadlineOption -BellStyle Visual
+Import-Module posh-docker

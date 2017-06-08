@@ -23,7 +23,7 @@ Param (
     }
     mkdir $build_dir | out-null
     Copy-Item -Path "$bin_path\*dll" -Destination $build_dir
-    & 7z a $artifact $build_dir
+    & 7z a $artifact "$build_dir\*.dll"
     Push-AppveyorArtifact $artifact -FileName $artifact_filename -DeploymentName release
 }
 
@@ -34,18 +34,22 @@ Param ([string]$name)
 }
 
 Function RunCodeCoverage {
-Param ([string]$project)
+Param (
+	[string]$Project,
+	[string]$Platform="x86",
+	[string]$Config="Release"
+)
 
     $OpenCoverPath = GetPackagePath('OpenCover')
     $NunitPath = GetPackagePath('NUnit.ConsoleRunner')
     $CoverallsPath = GetPackagePath('coveralls')
-    $test_dll = GetChildItemsRegex -Path $env:APPVEYOR_BUILD_FOLDER -Recurse -Regex ".*bin\\x86\\Release\\.*Test.*\.dll"
+    $TestAssembly = "$Project.Tests\bin\$Platform\$Config\$Project.Tests.dll"
 
     & "$OpenCoverPath\tools\OpenCover.Console.exe" `
         -register:user `
         -target:"$NunitPath\tools\nunit3-console.exe" `
-        -targetargs:"--noheader /domain:single $test_dll" `
-        -filter:"+[$project]*" -mergebyhash -skipautoprops `
+        -targetargs:"--noheader /domain:single $TestAssembly" `
+        -filter:"+[$Project]*" -mergebyhash -skipautoprops `
         -output:"coverage.xml"
 
     & "$CoverallsPath\tools\coveralls.net.exe" --opencover coverage.xml

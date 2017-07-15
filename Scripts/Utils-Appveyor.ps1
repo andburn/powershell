@@ -49,7 +49,7 @@ Param (
 
     $OpenCoverPath = GetPackagePath('OpenCover')
     $NunitPath = GetPackagePath('NUnit.ConsoleRunner')
-    $CoverallsPath = GetPackagePath('coveralls')
+    $CoveragePath = GetPackagePath('Codecov')
     $TestAssembly = "$Project.Tests\bin\$Platform\$Config\$Project.Tests.dll"
 
     & "$OpenCoverPath\tools\OpenCover.Console.exe" `
@@ -59,5 +59,5 @@ Param (
         -filter:"+[$Project]*" -mergebyhash -skipautoprops `
         -output:"coverage.xml"
 
-    & "$CoverallsPath\tools\coveralls.net.exe" --opencover coverage.xml
+    & "$CoveragePath\tools\codecov.exe" -f coverage.xml
 }

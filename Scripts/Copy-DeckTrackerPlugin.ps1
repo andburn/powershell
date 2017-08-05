@@ -1,7 +1,6 @@
 #Requires -Version 3.0
 
 Param(	
-	[string]$ProjectName,
 	[string]$ProjectDir,
 	[string]$Config="Release",
 	[string]$Platform="x86"
@@ -9,11 +8,7 @@ Param(
 
 $AppDir = "$env:LOCALAPPDATA\HearthstoneDeckTracker"
 $DataDir = "$env:APPDATA\HearthstoneDeckTracker"
-
-if (-not $ProjectName) {
-	Write-Output "-ProjectName is required"	
-	Return
-}
+$ProjectName = (Get-ChildItem -Path $ProjectDir | Where { $_.Name -match ".+?\.sln" }).BaseName
 
 if (-not $ProjectDir) {
 	$ProjectDir = $(Get-Location).Path

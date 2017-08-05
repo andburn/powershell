@@ -1,4 +1,7 @@
 $ScriptPath = Split-Path $Profile | Join-Path -ChildPath 'Scripts'
+# Disable error ping
+Set-PSReadlineOption -BellStyle Visual
+# Aliases
 # .NET
 New-Alias NUnit $ScriptPath\Invoke-NUnitOnProject.ps1
 New-Alias OpenCover $ScriptPath\Invoke-OpenCoverOnProject.ps1
@@ -7,7 +10,5 @@ New-Alias BuildProj $ScriptPath\Invoke-MSBuildOnProject.ps1
 New-Alias CommitDate $ScriptPath\Git-CommitWithDate.ps1
 # Misc
 New-Alias npp $env:ProgramFilesX86\Notepad++\notepad++.exe
-New-Alias HDTPlugin $ScriptPath\Copy-DeckTrackerPlugin.ps1
-# Disable error ping
-Set-PSReadlineOption -BellStyle Visual
-Import-Module posh-docker
+New-Alias hdt $ScriptPath\Invoke-DeckTracker.ps1
+New-Alias hdt-plugin $ScriptPath\Copy-DeckTrackerPlugin.ps1

@@ -19,8 +19,7 @@ Param (
 	If ($AppendTag) {
 		$artifact_postfix = "_$env:APPVEYOR_REPO_TAG_NAME$artifact_postfix"
 	}
-	
-	_$env:APPVEYOR_REPO_TAG_NAME
+
     $artifact_filename = "$artifact_prefix$artifact_postfix"
     $artifact = Join-Path -Path $build_dir -ChildPath $artifact_filename
     $bin_path = Join-Path -Path $env:APPVEYOR_BUILD_FOLDER -ChildPath $project_name | Join-Path -ChildPath $release_path

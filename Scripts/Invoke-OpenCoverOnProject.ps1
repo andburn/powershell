@@ -83,7 +83,9 @@ $cover_output = & $exeOpenCover `
     -register:user `
     -target:$exeNUnit `
     -targetargs:"--noheader --noresult /domain:single $tests" `
-    -filter:"+[$projectName]*" -mergebyhash -skipautoprops `
+    -filter:"+[$projectName]* -[$projectName]*View -[$projectName]Costura* -[$projectName]XamlGenerated* -[$projectName]MergedTrigger -[$projectName]ProcessedByFody" `
+	-mergebyhash `
+	-skipautoprops `
     -output:"$projectPath\$coverageDir\opencover.results.xml"
     
 WriteTestCount $cover_output

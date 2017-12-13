@@ -12,3 +12,8 @@ New-Alias CommitDate $ScriptPath\Git-CommitWithDate.ps1
 New-Alias npp $env:ProgramFilesX86\Notepad++\notepad++.exe
 New-Alias hdt $ScriptPath\Invoke-DeckTracker.ps1
 New-Alias hdt-plugin $ScriptPath\Copy-DeckTrackerPlugin.ps1
+New-Alias hash $ScriptPath\Utils-Checksum.ps1
+# Functions
+Function md5sum([string]$file) { & $ScriptPath\Utils-Checksum.ps1 -File $file -Algorithm MD5 }
+Function sha1sum([string]$file) { & $ScriptPath\Utils-Checksum.ps1 -File $file -Algorithm SHA1 }
+Function sha256sum([string]$file) { & $ScriptPath\Utils-Checksum.ps1 -File $file -Algorithm SHA256 }

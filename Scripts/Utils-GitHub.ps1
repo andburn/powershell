@@ -20,6 +20,9 @@ Param(
 	[switch]$Scrape
 )
 
+	# use TLS 1.2, default is TLS 1.0
+	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
 	$ZipName = "$($Repo)_latest.zip"
 
 	If ($Scrape) {

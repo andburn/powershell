@@ -1,4 +1,6 @@
 $ScriptPath = Split-Path $Profile | Join-Path -ChildPath 'Scripts'
+# Import PoshGit
+Import-Module posh-git
 # Disable error ping
 Set-PSReadlineOption -BellStyle Visual
 # Aliases

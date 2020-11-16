@@ -11,7 +11,7 @@ New-Alias BuildProj $ScriptPath\Invoke-MSBuildOnProject.ps1
 # Git
 New-Alias CommitDate $ScriptPath\Git-CommitWithDate.ps1
 # Misc
-New-Alias npp $env:ProgramFilesX86\Notepad++\notepad++.exe
+New-Alias npp $env:InstalledPrograms\Notepad++\notepad++.exe
 New-Alias hdt $ScriptPath\Invoke-DeckTracker.ps1
 New-Alias hdt-plugin $ScriptPath\Copy-DeckTrackerPlugin.ps1
 New-Alias hash $ScriptPath\Utils-Checksum.ps1

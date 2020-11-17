@@ -3,15 +3,20 @@
 Param(	
 	[string]$ProjectDir,
 	[string]$Config="Release",
-	[string]$Platform="x86"
+	[string]$Platform=""
 )
 
 $AppDir = "$env:LOCALAPPDATA\HearthstoneDeckTracker"
 $DataDir = "$env:APPDATA\HearthstoneDeckTracker"
 $ProjectName = (Get-ChildItem -Path $ProjectDir | Where { $_.Name -match ".+?\.sln" }).BaseName
+$ConfigDir = $Config
 
 if (-not $ProjectDir) {
 	$ProjectDir = $(Get-Location).Path
+}
+
+if ($Platform) {
+	$ConfigDir = "$Config\$Platform"
 }
 
 $hdt = Get-Process "HearthstoneDeckTracker" -ErrorAction SilentlyContinue
@@ -36,7 +41,7 @@ if (test-path "$DataDir\Plugins\$ProjectName") {
 	mkdir "$DataDir\Plugins\$ProjectName" | out-null
 }
 
-Copy-Item "$ProjectDir\$($ProjectName)\bin\$Platform\$Config\$ProjectName*.dll" "$DataDir\Plugins\$ProjectName" -Force
+Copy-Item "$ProjectDir\$($ProjectName)\bin\$ConfigDir\$ProjectName*.dll" "$DataDir\Plugins\$ProjectName" -Force
 Sleep 2
 Write-Output "Starting HDT"
 Start-Process "$AppDir\Update.exe" -ArgumentList "--processStart","HearthstoneDeckTracker.exe"

@@ -19,3 +19,4 @@ New-Alias hash $ScriptPath\Utils-Checksum.ps1
 Function md5sum([string]$file) { & $ScriptPath\Utils-Checksum.ps1 -File $file -Algorithm MD5 }
 Function sha1sum([string]$file) { & $ScriptPath\Utils-Checksum.ps1 -File $file -Algorithm SHA1 }
 Function sha256sum([string]$file) { & $ScriptPath\Utils-Checksum.ps1 -File $file -Algorithm SHA256 }
+Function hdtlog() {Get-Content -Wait "$env:APPDATA\HearthstoneDeckTracker\Logs\hdt_log.txt"}

@@ -1,7 +1,7 @@
 #Requires -Version 3.0
 
 Param(
-	[string]$Platform="AnyCPU",
+	[string]$Platform="x86",
 	[string]$Config="Release"
 )
 

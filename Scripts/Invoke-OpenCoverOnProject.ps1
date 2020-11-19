@@ -1,7 +1,7 @@
 #Requires -Version 3.0
 
 Param(
-	[string]$Platform="AnyCPU",
+	[string]$Platform="x86",
 	[string]$Config="Release"
 )
 
@@ -58,7 +58,7 @@ $tests = GetChildItemsRegex -Path $projectPath -Recurse -Regex $TestRegEx
 # get the exe paths from the nuget packages, not local
 $exeNUnit = Get-Location | GetChildItemsRegex -Recurse -Regex ".*NUnit.ConsoleRunner.*nunit3-console.exe$"
 $exeOpenCover = Get-Location | GetChildItemsRegex -Recurse -Regex ".*OpenCover.Console.exe$"
-$exeReportGen = Get-Location | GetChildItemsRegex -Recurse -Regex ".*ReportGenerator.exe$"
+$exeReportGen = Get-Location | GetChildItemsRegex -Recurse -Regex ".*\\net47\\ReportGenerator.exe$"
 
 # want only one test assembly
 if (-not $tests) {

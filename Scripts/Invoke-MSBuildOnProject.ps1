@@ -3,7 +3,7 @@
 Param(
 	[string]$Path,
 	[string]$Config="Debug",
-	[string]$Platform="AnyCPU",
+	[string]$Platform="x86",
 	[switch]$Quiet,
 	[switch]$NoBuildEvents
 )

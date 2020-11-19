@@ -3,7 +3,7 @@
 Param(	
 	[string]$ProjectDir,
 	[string]$Config="Release",
-	[string]$Platform=""
+	[string]$Platform="x86"
 )
 
 $AppDir = "$env:LOCALAPPDATA\HearthstoneDeckTracker"
